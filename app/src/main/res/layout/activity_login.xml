@@ -35,15 +35,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
+
         <EditText
             android:id="@+id/log_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="text"
-            android:textSize="15sp"
             android:drawableStart="@drawable/ic_password"
-            android:drawablePadding="10dp"/>
+            android:drawablePadding="10dp"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textSize="15sp" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
