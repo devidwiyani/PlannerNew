@@ -36,8 +36,10 @@
         <entry key="app/src/main/res/drawable/select_input.xml" value="0.2833333333333333" />
         <entry key="app/src/main/res/layout/activity_assignment.xml" value="0.22327898550724637" />
         <entry key="app/src/main/res/layout/activity_create_daily.xml" value="0.22327898550724637" />
+        <entry key="app/src/main/res/layout/activity_daily.xml" value="0.20989583333333334" />
         <entry key="app/src/main/res/layout/activity_list.xml" value="0.20989583333333334" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.22327898550724637" />
+        <entry key="app/src/main/res/layout/item_daily.xml" value="0.20989583333333334" />
       </map>
     </option>
   </component>

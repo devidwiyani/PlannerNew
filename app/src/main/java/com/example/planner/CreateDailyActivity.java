@@ -32,6 +32,7 @@ public class CreateDailyActivity extends AppCompatActivity {
         inputEndTime = findViewById(R.id.input_end_time);
         buttonSubmit = findViewById(R.id.btn_submit_daily);
 
+
         dbHelper = new DBHelper(this);
 
         inputStartTime.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +88,7 @@ public class CreateDailyActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
+
             String tambahdailyplan = inputDailyPlan.getText().toString();
             String tambahstarttime = inputStartTime.getText().toString();
             String tambahendtime = inputEndTime.getText().toString();
@@ -99,7 +101,7 @@ public class CreateDailyActivity extends AppCompatActivity {
                 Intent intent = new Intent(CreateDailyActivity.this,DailyActivity.class);
                 startActivity(intent);
 
-                //dbHelper.insertAssignment(tambahdailyplan , tambahstarttime, tambahendtime);
+                dbHelper.insertDaily(tambahdailyplan , tambahstarttime, tambahendtime);
 
                 Toast.makeText(CreateDailyActivity.this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show();
                 finish();

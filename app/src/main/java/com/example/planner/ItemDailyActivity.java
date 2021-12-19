@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ListActivity extends AppCompatActivity {
+public class ItemDailyActivity extends AppCompatActivity {
 
     ArrayList<DailyPlaner> dailyPlanerArrayList;
     DBHelper myDB;
@@ -18,18 +18,18 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+        setContentView(R.layout.item_daily);
 
         dailyPlanerArrayList = new ArrayList<>();
-        myDB = new DBHelper(ListActivity.this);
+        myDB = new DBHelper(ItemDailyActivity.this);
 
         //dailyPlanerArrayList = myDB.read();
 
 
-        customAdapter = new RecyclerViewAdapter(dailyPlanerArrayList, ListActivity.this);
-        recyclerView = findViewById(R.id.recycler_view);
+        customAdapter = new RecyclerViewAdapter(dailyPlanerArrayList, ItemDailyActivity.this);
+        recyclerView = findViewById(R.id.daftarCart);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ListActivity.this, RecyclerView.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ItemDailyActivity.this, RecyclerView.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
 
