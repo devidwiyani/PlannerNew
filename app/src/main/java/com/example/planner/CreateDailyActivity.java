@@ -3,11 +3,15 @@ package com.example.planner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -15,6 +19,8 @@ public class CreateDailyActivity extends AppCompatActivity {
 
     private EditText inputDailyPlan, inputStartTime, inputEndTime;
     private TimePickerDialog timePickerDialog;
+    private Button buttonSubmit;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,9 @@ public class CreateDailyActivity extends AppCompatActivity {
         inputDailyPlan = findViewById(R.id.input_daily_plan);
         inputStartTime = findViewById(R.id.input_start_time);
         inputEndTime = findViewById(R.id.input_end_time);
+        buttonSubmit = findViewById(R.id.btn_submit_daily);
+
+        dbHelper = new DBHelper(this);
 
         inputStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,5 +82,29 @@ public class CreateDailyActivity extends AppCompatActivity {
                 DateFormat.is24HourFormat(this));
 
         timePickerDialog.show();
-    }
+
+    buttonSubmit.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            String tambahdailyplan = inputDailyPlan.getText().toString();
+            String tambahstarttime = inputStartTime.getText().toString();
+            String tambahendtime = inputEndTime.getText().toString();
+
+
+            if (tambahdailyplan.isEmpty() || tambahstarttime.isEmpty() || tambahendtime.isEmpty() ){
+                Toast.makeText(CreateDailyActivity.this, "Data belum lengkap", Toast.LENGTH_SHORT).show();
+            }else{
+                ContentValues values = new ContentValues();
+                Intent intent = new Intent(CreateDailyActivity.this,DailyActivity.class);
+                startActivity(intent);
+
+                //dbHelper.insertAssignment(tambahdailyplan , tambahstarttime, tambahendtime);
+
+                Toast.makeText(CreateDailyActivity.this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    });
+}
 }
