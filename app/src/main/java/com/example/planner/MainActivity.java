@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     ImageButton btnDaily, btnEvent;
+    TextView name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +21,11 @@ public class MainActivity extends AppCompatActivity {
 
         btnDaily = findViewById(R.id.btn_daily);
         btnEvent = findViewById(R.id.btn_event);
+
+        Intent bundle = getIntent();
+        name = findViewById(R.id.name);
+
+        name.setText(bundle.getStringExtra("data_name"));
 
         btnDaily.setOnClickListener(new View.OnClickListener() {
             @Override

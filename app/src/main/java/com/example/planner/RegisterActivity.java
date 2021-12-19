@@ -112,11 +112,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                             ContentValues values = new ContentValues();
                             Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
-                            intent.putExtra("data_username", getUsername);
-                            intent.putExtra("data_password", getPassword);
+//                            intent.putExtra("data_username", getUsername);
+//                            intent.putExtra("data_password", getPassword);
                             intent.putExtra("data_name", getName);
-                            intent.putExtra("data_umur", getUmur);
-                            intent.putExtra("data_gender", getGender);
+//                            intent.putExtra("data_umur", getUmur);
+//                            intent.putExtra("data_gender", getGender);
                             startActivity(intent);
 
                             values.put(DBHelper.row_username, getUsername);

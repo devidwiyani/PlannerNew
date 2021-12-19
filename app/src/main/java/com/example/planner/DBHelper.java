@@ -52,13 +52,24 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         database.close();
 
-        if (count > 0)
-            return true;
-        else
-            return false;
+        return count > 0;
     }
 
     public void insertUser(ContentValues values) {
         database.insert(table_user, null, values);
+    }
+
+    public Cursor selectUser(String user){
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "select name from "+table_user+" WHERE "+row_username+"=?";
+
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+
     }
 }

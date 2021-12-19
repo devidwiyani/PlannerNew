@@ -24,13 +24,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="2"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="20dp"
                 android:layout_margin="5dp">
@@ -75,15 +75,15 @@
                                 android:layout_height="wrap_content"
                                 android:layout_toEndOf="@+id/hai"
                                 android:text=" user name "
-                                android:textStyle="bold"
-                                android:textColor="@color/black"/>
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/are_you"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/name"
-                                android:text="!  are you ready to be" />
+                                android:text="are you ready to be" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -107,7 +107,8 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="20dp"
                 android:layout_marginHorizontal="5dp"
@@ -152,7 +153,8 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="20dp"
                 android:layout_marginHorizontal="5dp"
