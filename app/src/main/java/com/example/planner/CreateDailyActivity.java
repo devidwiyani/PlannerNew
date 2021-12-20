@@ -21,6 +21,7 @@ public class CreateDailyActivity extends AppCompatActivity {
     private TimePickerDialog timePickerDialog;
     private Button buttonSubmit;
     private DBHelper dbHelper;
+    String id, dailyName, startTime, endTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,14 @@ public class CreateDailyActivity extends AppCompatActivity {
         inputEndTime = findViewById(R.id.input_end_time);
         buttonSubmit = findViewById(R.id.btn_submit_daily);
 
+        id = getIntent().getStringExtra("id");
+        dailyName = getIntent().getStringExtra("dailyPlan");
+        startTime = getIntent().getStringExtra("startTime");
+        endTime = getIntent().getStringExtra("endTime");
+
+        inputDailyPlan.setText(dailyName);
+        inputStartTime.setText(startTime);
+        inputEndTime.setText(endTime);
 
         dbHelper = new DBHelper(this);
 
@@ -87,8 +96,7 @@ public class CreateDailyActivity extends AppCompatActivity {
     buttonSubmit.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-
+            String getId = id;
             String tambahdailyplan = inputDailyPlan.getText().toString();
             String tambahstarttime = inputStartTime.getText().toString();
             String tambahendtime = inputEndTime.getText().toString();
@@ -101,7 +109,7 @@ public class CreateDailyActivity extends AppCompatActivity {
                 Intent intent = new Intent(CreateDailyActivity.this,DailyActivity.class);
                 startActivity(intent);
 
-                dbHelper.insertDaily(tambahdailyplan , tambahstarttime, tambahendtime);
+                dbHelper.insertDaily(getId, tambahdailyplan , tambahstarttime, tambahendtime);
 
                 Toast.makeText(CreateDailyActivity.this, "Data berhasil disimpan", Toast.LENGTH_SHORT).show();
                 finish();

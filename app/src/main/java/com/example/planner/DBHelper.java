@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String database_name = "db_task";
@@ -172,6 +174,32 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return dailyPlanerArrayList;
+
+    }
+
+    public void insertDaily(String id, String tambahdailyplan, String tambahstarttime, String tambahendtime) {
+
+        SQLiteDatabase dbWrite = this.getWritableDatabase();
+        SQLiteDatabase dbRead = getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(row_dailyPlan, tambahdailyplan);
+        values.put(row_startTime, tambahstarttime);
+        values.put(row_endTime, tambahendtime);
+
+        Cursor checkSameInDaily = dbRead.rawQuery("SELECT*FROM tb_daily WHERE row_dailyId = "+id,null);
+        if(checkSameInDaily.getCount() == 0)
+        {
+            dbWrite.insert(table_daily, null, values);
+        }
+        else
+        {
+            checkSameInDaily.moveToLast();
+            dbWrite.update(table_daily, values, "row_dailyId=?", new String[]{id});
+        }
+
+        dbWrite.close();
+        dbRead.close();
 
     }
 }

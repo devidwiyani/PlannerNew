@@ -40,24 +40,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //setText sesuai data pada list
         holder.dailyPlan.setText(list.getTambahdailyplaner());
         holder.startTime.setText(list.getTambahstarttime());
+        holder.endTime.setText(list.getTambahendtime());
 
 
-        //ke update
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent i = new Intent(context, UpdateActivity.class);
-//
-//                i.putExtra("id", String.valueOf(list.getId()));
-//                i.putExtra("title", list.getAssignmentTitle());
-//                i.putExtra("course", list.getAssignmentCourse());
-//                i.putExtra("date", list.getAssignmentDate());
-//                i.putExtra("note", list.getAssignmentNote());
-//
-//                context.startActivity(i);
-//            }
-//        });
+//        ke update
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(context, CreateDailyActivity.class);
+
+                i.putExtra("id", String.valueOf(list.getId()));
+                i.putExtra("dailyPlan", list.getTambahdailyplaner());
+                i.putExtra("startTime", list.getTambahstarttime());
+                i.putExtra("endTime", list.getTambahendtime());
+
+                context.startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -68,7 +68,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //ViewHolder Digunakan Untuk Menyimpan Referensi Dari View-View
     class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView dailyPlan, startTime;
+        TextView dailyPlan, startTime, endTime;
 
          ViewHolder(@NonNull View itemView) {
 
@@ -76,6 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
             dailyPlan = itemView.findViewById(R.id.daily_plan_name);
             startTime = itemView.findViewById(R.id.daily_plan_time);
+            endTime = itemView.findViewById(R.id.daily_end_time);
 
         }
 
