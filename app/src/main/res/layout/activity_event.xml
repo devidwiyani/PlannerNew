@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DailyActivity"
+    tools:context=".EventActivity"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -48,7 +48,7 @@
             android:layout_marginTop="10dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/daftarCart"
+                android:id="@+id/recyclerEvent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_event"/>

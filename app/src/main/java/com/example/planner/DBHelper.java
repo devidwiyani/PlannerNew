@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String database_name = "db_task";
@@ -16,6 +18,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String row_name = "name";
     public static final String row_umur = "umur";
     public static final String row_gender = "gender";
+
+    public static final String table_event = "tb_event";
+    public static final String row_eventId = "event_id";
+    public static final String row_eventName = "event_name";
+    public static final String row_eventLocation = "event_location";
+    public static final String row_eventDate = "event_date";
+    public static final String row_eventTime = "event_time";
 
     public SQLiteDatabase database;
 
@@ -34,11 +43,20 @@ public class DBHelper extends SQLiteOpenHelper {
                 + row_umur + " TEXT,"
                 + row_gender + " TEXT)";
         database.execSQL(query);
+        String queryEvent = "CREATE TABLE " + table_event + "("
+                + row_eventId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + row_userid + " INTEGER , "
+                + row_eventName+ " TEXT,"
+                + row_eventLocation + " TEXT,"
+                + row_eventDate + " DATE,"
+                + row_eventTime + " TEXT)";
+        database.execSQL(queryEvent);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         database.execSQL("DROP TABLE IF EXISTS " + table_user);
+        database.execSQL("DROP TABLE IF EXISTS " + table_event);
         onCreate(database);
     }
 
@@ -71,5 +89,55 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return cursor;
 
+    }
+
+    public void insertEvent(String id, String eventPlan, String eventLocation, String eventDate, String evenTime) {
+
+        SQLiteDatabase dbWrite = this.getWritableDatabase();
+        SQLiteDatabase dbRead = getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(row_eventName, eventPlan);
+        values.put(row_eventLocation, eventLocation);
+        values.put(row_eventDate, eventDate);
+        values.put(row_eventTime, evenTime);
+
+        Cursor checkSameInCart = dbRead.rawQuery("SELECT*FROM tb_event WHERE event_id = "+id,null);
+        if(checkSameInCart.getCount() == 0)
+        {
+            dbWrite.insert(table_event, null, values);
+        }
+        else
+        {
+            checkSameInCart.moveToLast();
+            dbWrite.update(table_event, values, "event_id=?", new String[]{id});
+        }
+
+        dbWrite.close();
+        dbRead.close();
+    }
+
+    public ArrayList<Event> readEvent() {
+
+        //memanggil database untuk bisa dibaca
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_event, null);
+
+        ArrayList<Event> eventArrayList = new ArrayList<Event>();
+
+        //menambhakan data ke array (per baris)
+        if (cursor.moveToFirst()) {
+            do {
+                eventArrayList.add(new Event(cursor.getInt(0),
+//                        cursor.getInt(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return eventArrayList;
     }
 }
