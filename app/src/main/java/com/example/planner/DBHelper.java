@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String database_name = "db_task";
@@ -26,6 +24,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String row_eventDate = "event_date";
     public static final String row_eventTime = "event_time";
 
+    public static final String table_daily = "tb_daily";
+    public static final String row_dailyId = "row_dailyId";
+    public static final String row_dailyPlan = "row_dailyPlan";
+    public static final String row_startTime = "row_startTime";
+    public static final String row_endTime = "row_endTime";
+    public static final String row_date = "row_date";
     public SQLiteDatabase database;
 
     public DBHelper(Context context) {
@@ -43,6 +47,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 + row_umur + " TEXT,"
                 + row_gender + " TEXT)";
         database.execSQL(query);
+        String queryDaily = "CREATE TABLE " + table_daily + "("
+                + row_dailyId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+              //  + row_userid + " INTEGER, "
+                + row_dailyPlan + " TEXT, "
+                + row_startTime + " TIME,"
+                + row_endTime + " TIME,"
+                + row_date + " DATE)";
+
+        database.execSQL(queryDaily);
         String queryEvent = "CREATE TABLE " + table_event + "("
                 + row_eventId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + row_userid + " INTEGER , "
@@ -56,7 +69,6 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         database.execSQL("DROP TABLE IF EXISTS " + table_user);
-        database.execSQL("DROP TABLE IF EXISTS " + table_event);
         onCreate(database);
     }
 
@@ -139,5 +151,27 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return eventArrayList;
+    }
+
+    public ArrayList<DailyPlaner> readDaily() {
+        //memanggil database untuk bisa dibaca
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_daily, null);
+
+        ArrayList<DailyPlaner> dailyPlanerArrayList = new ArrayList<DailyPlaner>();
+
+        //menambhakan data ke array (per baris)
+        if (cursor.moveToFirst()) {
+            do {
+                dailyPlanerArrayList.add(new DailyPlaner(cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return dailyPlanerArrayList;
+
     }
 }
