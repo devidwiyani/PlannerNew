@@ -23,16 +23,19 @@ public class DailyActivity extends AppCompatActivity {
     ArrayList<DailyPlaner> dailyArrayList;
     RecyclerViewAdapter customAdapter;
     RecyclerView recyclerView;
+    SharedPrefManager spm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily);
+
+        int idUser= spm.getSPId(this);
+
         dailyArrayList = new ArrayList<>();
         dbHelper = new DBHelper(DailyActivity.this);
 
-        dailyArrayList = dbHelper.readDaily();
-
+        dailyArrayList = dbHelper.readDaily(idUser);
 
         customAdapter = new RecyclerViewAdapter(dailyArrayList, DailyActivity.this);
         recyclerView = findViewById(R.id.daftarCart);
