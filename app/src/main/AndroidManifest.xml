@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Planner">
         <activity
+            android:name=".RepeatActivity"
+            android:exported="true" />
+        <activity
             android:name=".CreateEventActivity"
             android:exported="true" />
         <activity

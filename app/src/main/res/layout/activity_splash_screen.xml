@@ -7,10 +7,17 @@
     android:gravity="center"
     tools:context=".SplashScreen">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PLANNER"
-        android:textColor="@color/blue"/>
+    <ImageView
+        android:id="@+id/deadline"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_deadline"/>
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/deadline"-->
+<!--        android:text="PLANNER"-->
+<!--        android:textColor="@color/blue"/>-->
 
 </RelativeLayout>

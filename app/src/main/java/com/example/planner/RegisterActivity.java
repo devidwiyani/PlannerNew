@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String KEY = "seekBarValue";
     int seekBarValue;
     TextView alertNama, alertEmail, alertUmur, alertGender, alertStatus, umur1, alertGreeting;
     EditText regUsername, regPassword, regName;
@@ -28,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     RadioGroup groupRadio;
     RadioButton buttonRadio1, buttonRadio2;
     CheckBox checkBox;
-    Button btnRegister, btnOk;
+    Button btnRegister;
     DBHelper dbHelper;
 
     @Override
@@ -111,22 +110,21 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onClick(View view) {
 
                             ContentValues values = new ContentValues();
-                            Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
-//                            intent.putExtra("data_username", getUsername);
-//                            intent.putExtra("data_password", getPassword);
-                            intent.putExtra("data_name", getName);
-//                            intent.putExtra("data_umur", getUmur);
-//                            intent.putExtra("data_gender", getGender);
-                            startActivity(intent);
+
 
                             values.put(DBHelper.row_username, getUsername);
                             values.put(DBHelper.row_password, getPassword);
                             values.put(DBHelper.row_name, getName);
                             values.put(DBHelper.row_umur, getUmur);
                             values.put(DBHelper.row_gender, getGender);
-                            dbHelper.insertUser(values);
-
-                            Toast.makeText(RegisterActivity.this, "Register Succesful", Toast.LENGTH_SHORT).show();
+                            int check = dbHelper.insertUser(values, getUsername);
+                            if (check == 0){
+                                Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+                                startActivity(intent);
+                                Toast.makeText(RegisterActivity.this, "Register Succesful", Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(RegisterActivity.this, "Register Unsuccesful", Toast.LENGTH_SHORT).show();
+                            }
 
                         }
                     });

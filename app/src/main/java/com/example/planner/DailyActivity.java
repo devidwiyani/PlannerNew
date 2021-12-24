@@ -1,5 +1,6 @@
 package com.example.planner;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,13 +20,14 @@ import java.util.ArrayList;
 
 public class DailyActivity extends AppCompatActivity {
 
-    Button btnCretaeDaily;
+    Button btnCretaeDaily, btnSave;
     EditText inputDailyPlan, inputStartTime, inputEndTime;
     DBHelper dbHelper;
     ArrayList<DailyPlaner> dailyArrayList;
     RecyclerViewAdapter customAdapter;
     RecyclerView recyclerView;
     SharedPrefManager spm;
+    int statusRepeat, saveId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,15 @@ public class DailyActivity extends AppCompatActivity {
         dailyArrayList = new ArrayList<>();
         dbHelper = new DBHelper(DailyActivity.this);
 
-        dailyArrayList = dbHelper.readDaily(idUser);
+        Intent bundle = getIntent();
+        statusRepeat = bundle.getIntExtra("status_repeat", 0);
+        saveId = bundle.getIntExtra("save_id", 0);
+
+        if(statusRepeat == 0){
+            dailyArrayList = dbHelper.readDaily(idUser);
+        }else{
+            dailyArrayList = dbHelper.readDailyRepeat(saveId);
+        }
 
         customAdapter = new RecyclerViewAdapter(dailyArrayList, DailyActivity.this);
         recyclerView = findViewById(R.id.daftarCart);
@@ -52,7 +64,45 @@ public class DailyActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(DailyActivity.this, CreateDailyActivity.class);
+                ContentValues values = new ContentValues();
+                values.put("id", idUser);
                 startActivity(intent);
+            }
+        });
+
+        btnSave = findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<DailyPlaner> list = dailyArrayList;
+
+
+                AlertDialog.Builder dialog1 = new AlertDialog.Builder(DailyActivity.this);
+                View view = getLayoutInflater().inflate(R.layout.alert_save_daily,null);
+
+                EditText input_title = (EditText) view.findViewById(R.id.input_title);
+                EditText input_deskripsi = (EditText) view.findViewById(R.id.input_deskripsi);
+
+                view.findViewById(R.id.button_ok).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String title = input_title.getText().toString();
+                        String deskripsi = input_deskripsi.getText().toString();
+                        int userId = idUser;
+                        Toast.makeText(v.getRootView().getContext(), "Save Daily "+title, Toast.LENGTH_LONG).show();
+
+                        long id=dbHelper.saveDaily(userId, title, deskripsi);
+                        dbHelper.updateSaveDaily((int) id,dailyArrayList);
+
+                    }
+                });
+
+                dialog1.setView(view);
+                AlertDialog dialog2 = dialog1.create();
+                dialog2.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog2.show();
             }
         });
     }

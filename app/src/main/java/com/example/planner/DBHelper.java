@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -31,7 +34,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String row_dailyPlan = "row_dailyPlan";
     public static final String row_startTime = "row_startTime";
     public static final String row_endTime = "row_endTime";
-    public static final String row_date = "row_date";
+    public static final String row_status = "row_status";
+
+    public static final String table_save = "tb_save";
+    public static final String row_saveId = "row_saveId";
+    public static final String row_title = "row_title";
+    public static final String row_deskripsi = "row_deskripsi";
+    public static final String row_tanggal = "row_tanggal";
+
     public SQLiteDatabase database;
 
     public DBHelper(Context context) {
@@ -55,7 +65,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + row_dailyPlan + " TEXT, "
                 + row_startTime + " TIME,"
                 + row_endTime + " TIME,"
-                + row_date + " DATE)";
+                + row_saveId + " INTEGER,"
+                + row_tanggal + " DATE,"
+                + row_status + " TEXT)";
 
         database.execSQL(queryDaily);
         String queryEvent = "CREATE TABLE " + table_event + "("
@@ -66,6 +78,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 + row_eventDate + " DATE,"
                 + row_eventTime + " TEXT)";
         database.execSQL(queryEvent);
+        String querySave = "CREATE TABLE " + table_save + "("
+                + row_saveId + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + row_userid + " INTEGER , "
+                + row_title + " TEXT , "
+                + row_deskripsi + " TEXT)";
+        database.execSQL(querySave);
     }
 
     @Override
@@ -87,25 +105,34 @@ public class DBHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    public void insertUser(ContentValues values) {
-        database.insert(table_user, null, values);
+    public int insertUser(ContentValues values, String username) {
+
+        SQLiteDatabase dbRead = getWritableDatabase();
+        SQLiteDatabase dbWrite = getWritableDatabase();
+        Cursor checkSameInUser= dbRead.rawQuery("SELECT*FROM tb_user WHERE username = '"+username+"'",null);
+        int check = checkSameInUser.getCount();
+        if(check == 0) {
+            dbWrite.insert(table_user, null, values);
+        }
+        return check;
     }
 
-    public Cursor selectUser(String user){
+    public String selectUser(String user){
 
         SQLiteDatabase db = getReadableDatabase();
 
-        String query = "select name from "+table_user+" WHERE "+row_username+"=?";
+        String query = "SELECT * FROM tb_user WHERE username = '"+user+"'";
 
         Cursor cursor = null;
         if (db != null) {
             cursor = db.rawQuery(query, null);
+            cursor.moveToFirst();
         }
-        return cursor;
+        return cursor.getString(1);
 
     }
 
-    public void insertEvent(String id, String eventPlan, String eventLocation, String eventDate, String evenTime) {
+    public void insertEvent(String id, String userId, String eventPlan, String eventLocation, String eventDate, String evenTime) {
 
         SQLiteDatabase dbWrite = this.getWritableDatabase();
         SQLiteDatabase dbRead = getReadableDatabase();
@@ -115,15 +142,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(row_eventLocation, eventLocation);
         values.put(row_eventDate, eventDate);
         values.put(row_eventTime, evenTime);
+        values.put(row_userid, userId);
 
-        Cursor checkSameInCart = dbRead.rawQuery("SELECT*FROM tb_event WHERE event_id = "+id,null);
-        if(checkSameInCart.getCount() == 0)
-        {
+        Cursor checkSameInEvent = dbRead.rawQuery("SELECT*FROM tb_event WHERE event_id = "+id,null);
+        if(checkSameInEvent.getCount() == 0) {
             dbWrite.insert(table_event, null, values);
-        }
-        else
-        {
-            checkSameInCart.moveToLast();
+        } else {
+            checkSameInEvent.moveToLast();
             dbWrite.update(table_event, values, "event_id=?", new String[]{id});
         }
 
@@ -131,20 +156,17 @@ public class DBHelper extends SQLiteOpenHelper {
         dbRead.close();
     }
 
-    public ArrayList<Event> readEvent() {
+    public ArrayList<Event> readEvent(int idUser) {
 
-        //memanggil database untuk bisa dibaca
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + table_event, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM tb_event WHERE user_id = " + idUser, null);
 
         ArrayList<Event> eventArrayList = new ArrayList<Event>();
 
-        //menambhakan data ke array (per baris)
         if (cursor.moveToFirst()) {
             do {
                 eventArrayList.add(new Event(cursor.getInt(0),
-//                        cursor.getInt(1),
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
@@ -153,23 +175,29 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return eventArrayList;
-    }
-
-    public ArrayList<DailyPlaner> readDaily(int idUser) {
-        //memanggil database untuk bisa dibaca
+    }public ArrayList<DailyPlaner> readDaily(int idUser) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM tb_daily WHERE user_id = " +idUser, null);
+        Calendar myCalendar = Calendar.getInstance();
+        String tgl = new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(myCalendar.getTime());
+
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+table_daily+" WHERE " +row_userid+ "=" +idUser+ " AND "+ row_tanggal +" ='" +tgl+"';", null);
+        //"SELECT * FROM "+table_daily+" WHERE " +row_userid+ "=" +idUser+ "AND" +row_tanggal+"=" +tgl
+
 
         ArrayList<DailyPlaner> dailyPlanerArrayList = new ArrayList<DailyPlaner>();
 
-        //menambhakan data ke array (per baris)
         if (cursor.moveToFirst()) {
             do {
                 dailyPlanerArrayList.add(new DailyPlaner(cursor.getInt(0),
                         cursor.getString(2),
                         cursor.getString(3),
-                        cursor.getString(4)));
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7)
+                ));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -177,16 +205,25 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+
+
     public void insertDaily(String getId, Integer userId, String tambahdailyplan, String tambahstarttime, String tambahendtime) {
 
         SQLiteDatabase dbWrite = this.getWritableDatabase();
         SQLiteDatabase dbRead = getReadableDatabase();
         ContentValues values = new ContentValues();
 
+        Calendar myCalendar = Calendar.getInstance();
+//        LocalDateTime now = LocalDateTime.now();
+        String tgl = new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(myCalendar.getTime());
+
         values.put(row_userid, userId);
         values.put(row_dailyPlan, tambahdailyplan);
         values.put(row_startTime, tambahstarttime);
         values.put(row_endTime, tambahendtime);
+        values.put(row_status, "undone");
+//        values.put(row_saveId, null)
+        values.put(row_tanggal, tgl);
 
         Cursor checkSameInDaily = dbRead.rawQuery("SELECT*FROM tb_daily WHERE row_dailyId = "+getId,null);
         if(checkSameInDaily.getCount() == 0)
@@ -210,4 +247,132 @@ public class DBHelper extends SQLiteOpenHelper {
         check.moveToFirst();
         return check.getInt(0);
     }
+
+
+    public int checkFriendId(String getUsername) {
+        SQLiteDatabase dbRead = this.getReadableDatabase();
+        Cursor check = dbRead.rawQuery("SELECT * FROM tb_user WHERE username = '"+getUsername+"'" ,null);
+        check.moveToFirst();
+        int x = check.getInt(0);
+        return x;
+    }
+
+    public void addFriendEvent(int checkFriendId, String eventName, String eventLocation, String eventDate, String eventTime) {
+        SQLiteDatabase dbWrite = this.getWritableDatabase();
+        SQLiteDatabase dbRead = getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(row_userid, checkFriendId);
+        values.put(row_eventName, String.valueOf(eventName));
+        values.put(row_eventLocation, String.valueOf(eventLocation));
+        values.put(row_eventDate, String.valueOf(eventDate));
+        values.put(row_eventTime, String.valueOf(eventTime));
+
+
+        dbWrite.insert(table_event, null, values);
+
+
+        dbWrite.close();
+        dbRead.close();
+
+    }
+
+    public void delete (int id){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_event,row_eventId+" =?",new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void deleteDaily(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(table_daily,row_dailyId+" =?",new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void setDone(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put(row_status,"done");
+//        db.rawQuery("UPDATE tb_daily SET row_status = 'done' where row_dailyId = " +id, null);
+        db.update(table_daily, cv, row_dailyId+"=?", new String[]{Integer.toString(id)});
+    }
+
+    public void setUnDone(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put(row_status,"undone");
+        db.update(table_daily, cv, row_dailyId+"=?", new String[]{Integer.toString(id)});
+
+    }
+
+    public long saveDaily(int userId, String input_title, String input_deskripsi) {
+
+        SQLiteDatabase dbWrite = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(row_userid, userId);
+        values.put(row_title, String.valueOf(input_title));
+        values.put(row_deskripsi, String.valueOf(input_deskripsi));
+
+
+        long id=dbWrite.insert(table_save, null, values);
+        return id;
+
+    }
+    public void updateSaveDaily(int id,ArrayList<DailyPlaner> dailyArrList){
+        SQLiteDatabase dbWrite = this.getWritableDatabase();
+        ContentValues cv=new ContentValues();
+        for(int i=0;i<dailyArrList.size();i++){
+            cv.put(row_saveId,id);
+            dbWrite.update(table_daily,cv,row_dailyId+"=?",new String[]{Integer.toString(dailyArrList.get(i).getId())});
+
+        }
+    }
+
+    public ArrayList<Repeat> readRepeat(int idUser) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM tb_save where user_id =" +idUser, null);
+
+        ArrayList<Repeat> repeatArrayList = new ArrayList<Repeat>();
+
+        //menambhakan data ke array (per baris)
+        if (cursor.moveToFirst()) {
+            do {
+                repeatArrayList.add(new Repeat(cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getString(2),
+                        cursor.getString(3)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return repeatArrayList;
+
+    }
+
+    public ArrayList<DailyPlaner> readDailyRepeat(int saveId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM tb_daily WHERE row_saveId = " +saveId , null);
+
+        ArrayList<DailyPlaner> dailyPlanerArrayList = new ArrayList<DailyPlaner>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                dailyPlanerArrayList.add(new DailyPlaner(cursor.getInt(0),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getString(7)
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return dailyPlanerArrayList;
+
+    }
+
 }

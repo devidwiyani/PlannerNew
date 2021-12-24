@@ -48,13 +48,35 @@
                 android:text="08.30"
                 android:textSize="15dp" />
 
-            <ImageButton
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/ic_delete_black_24dp__3_" />
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btn_delete"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/ic_delete_black_24dp__3_" />
+
+
+                <CheckBox
+                    android:id="@+id/check_box"
+                    android:layout_width="35dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:backgroundTint="@color/white"
+                    android:gravity="center"
+                    android:src="@drawable/ic_delete_black_24dp__3_" />
+
+            </RelativeLayout>
+
+
 
 
         </RelativeLayout>

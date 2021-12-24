@@ -7,20 +7,33 @@ public class DailyPlaner {
     private String tambahdailyplaner;
     private String tambahstarttime;
     private String tambahendtime;
-
+    private String tambahstatus;
+    private String tambahsaveid;
+    private String tambahtanggal;
     private int id;
 
 
     // constructor
-    public DailyPlaner(Integer id, String inputDailyPlan, String inputStartTime, String inputEndTime) {
+    public DailyPlaner(Integer id, String inputDailyPlan, String inputStartTime, String inputEndTime, String inputSaveId, String inputTanggal, String inputStatus) {
         this.id = id;
         this.tambahdailyplaner = inputDailyPlan;
         this.tambahstarttime = inputStartTime;
         this.tambahendtime = inputEndTime;
+        this.tambahsaveid = inputSaveId;
+        this.tambahtanggal = inputTanggal;
+        this.tambahstatus = inputStatus;
 
     }
 
     // creating getter and setter methods
+    public String getTambahstatus() {
+        return tambahstatus;
+    }
+
+    public void setTambahstatus(String tambahstatus ) {
+        this.tambahstatus = tambahstatus;
+    }
+
     public String getTambahdailyplaner() {
         return tambahdailyplaner;
     }
